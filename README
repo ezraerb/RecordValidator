@@ -26,7 +26,7 @@ manually entered and then submitted to a processor as a batch.
 The validation rules often involve a maximum of a few fields per rule, so a 
 learning algorithm optimized for such rules is ideal. For this code, I chose the
 Induction Learning Algorithm, described here: 
-http://www.dis.uniroma1.it/~sassano/STAGE/LearningRule.pdf?origin=publication_detail
+http://www.dis.uniroma1.it/~sassano/STAGE/LearningRule.pdf
 
 Unlike Information Theory centered approaches, this algorithm directly searches
 for rules requiring as few record fields as possible that classify as many 
@@ -62,10 +62,10 @@ Test flow:
 Running any program listed below without arguments lists instructions.
 1. If not using external data files, generate test data by 
 'java TestRecordGenerator'. 
-3. If using cross-validation to generate training data, run 'java SliceDataSet' to generate the training data records.
-4. If generating input data from records with validation already set for ease of
+2. If using cross-validation to generate training data, run 'java SliceDataSet' to generate the training data records.
+3. If generating input data from records with validation already set for ease of
 checking results, run 'java StripClassification' to generate recods without the
 validation fields set.
-5. Process the training data and input data with 'java RecordClassifier'
-6. Compare the validation results to the records used to generate the input
+4. Process the training data and input data with 'java RecordClassifier'
+5. Compare the validation results to the records used to generate the input
 data with 'java CompRecordsToBaseline'. Misclassifified records will be output.
