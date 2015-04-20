@@ -1,0 +1,71 @@
+This file describes RecordValidator, a program for learning rules to validate 
+reccrds based on a training set. The package also includes TestRecordGenerator,
+a program for generating synthetic record data and validate it based on a set 
+of fixed rules, and utilities for creating training data and validating results
+
+   Copyright (C) 2014   Ezra Erb
+
+This program is free software: you can redistribute it and/or modify it under 
+the terms of the GNU General Public License version 3 as published by the Free 
+Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with 
+this program.  If not, see <http://www.gnu.org/licenses/>.
+
+I'd appreciate a note if you find this program useful or make updates. Please 
+contact me through LinkedIn or github 
+
+This program uses a training data set to classify records as valid or invalid
+based on their input fields. Such validation occurs often when records are
+manually entered and then submitted to a processor as a batch.
+
+The validation rules often involve a maximum of a few fields per rule, so a 
+learning algorithm optimized for such rules is ideal. For this code, I chose the
+Induction Learning Algorithm, described here: 
+http://www.dis.uniroma1.it/~sassano/STAGE/LearningRule.pdf?origin=publication_detail
+
+Unlike Information Theory centered approaches, this algorithm directly searches
+for rules requiring as few record fields as possible that classify as many 
+training records as possible. It has a bias toward more general rules over 
+specific ones, making it ideal when the domain classification rules are broad 
+and simple.
+
+Sets of records are hard to find due to confidentially concerns, so records for 
+testing these algorithms are often simulated. TestRecordGenerator handles the
+generation process. Field values are chosen randomly independently for each 
+field within various distributions. A set of validation rules is then applied
+to find the validity. The former is based on a Factory pattern, and the latter
+uses Chain of Responsibility. Currently, both the field values and the 
+validtion rules are hard-coded, based on a simplified version of Medicare
+billing records. The validation rules invalidate roughly 25% of the records.
+
+I tested the classification algorithm using cross-validation on a set of ten 
+thousand generated records. For each pass, roughly 20% of the records served 
+as training records with the rest to be classified. The algorithm correctly
+identified all of the single field validation rules, but did not identify any
+of the rules requiring multiple fields. This was sufficient to produce a 
+classification error rate of less than 0.1%
+
+All input data must be CSV files, with one record per line. All records of a
+given type (training/input) must have the same number of fields per record
+or the data is rejected. Training records must have the validity as the last
+field, with 'true' indicating the record is valid and 'false' indicating it is
+invalid. Training records must have examples of both types. The calculated 
+validity will be appended as the last field of each input record and the 
+records output.
+
+Test flow:
+Running any program listed below without arguments lists instructions.
+1. If not using external data files, generate test data by 
+'java TestRecordGenerator'. 
+3. If using cross-validation to generate training data, run 'java SliceDataSet' to generate the training data records.
+4. If generating input data from records with validation already set for ease of
+checking results, run 'java StripClassification' to generate recods without the
+validation fields set.
+5. Process the training data and input data with 'java RecordClassifier'
+6. Compare the validation results to the records used to generate the input
+data with 'java CompRecordsToBaseline'. Misclassifified records will be output.
